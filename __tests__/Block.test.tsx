@@ -20,7 +20,12 @@ it("renders topbar unchanged", () => {
   };
   const instName = "Instrument";
   const { container } = render(
-    <Block pv={aBlock} instName={instName} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={instName}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -31,7 +36,12 @@ it("renders topbar unchanged", () => {
 it("renders nothing if pv is hidden", () => {
   const aBlock: IfcBlock = { pvaddress: "SOME:PV", visible: false };
   const { container } = render(
-    <Block pv={aBlock} instName={"ANINST"} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={"ANINST"}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -46,7 +56,12 @@ it("renders block with correct name", () => {
     human_readable_name: "MyBlock",
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -65,7 +80,12 @@ it("renders block with run control that is in range as a tick", () => {
     runcontrol_enabled: true,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -85,7 +105,12 @@ it("renders block with run control that is not in range as a cross", () => {
     runcontrol_enabled: true,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -105,7 +130,12 @@ it("renders block without run control without tick or cross", () => {
     runcontrol_enabled: false,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -129,7 +159,12 @@ it("renders block with SP and shows SP value", () => {
     value: expectedValue,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -158,7 +193,12 @@ it("renders block with timestamp and shows timestamp value", () => {
     value: expectedValue,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },
@@ -187,7 +227,12 @@ it("renders block without SP and hides SP value", () => {
     sp_value: expectedSpValue,
   };
   const { container } = render(
-    <Block pv={aBlock} instName={""} showHiddenBlocks={false} />,
+    <Block
+      address="SOME:PV"
+      pv={aBlock}
+      instName={""}
+      showHiddenBlocks={false}
+    />,
     {
       container: tableBody,
     },

@@ -1,5 +1,5 @@
 "use client";
-import { type RefObject, useEffect, useRef, useState } from "react";
+import { type RefObject, startTransition, useRef, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import {
   instListPV,
@@ -34,7 +34,6 @@ export default function BeamStatusDisplay() {
   const [instList, setInstList] = useState<Array<instListEntry>>([]);
   const [webSockErr, setWebSockErr] = useState("");
 
-  const messageQueue: RefObject<Array<IfcPVWSMessage>> = useRef([]);
   // Raw value of the last instlist we subscribed to shutter PVs for,
   // so that we only re-subscribe if the instlist actually changes.
   const lastInstList: RefObject<string | null> = useRef(null);
@@ -48,7 +47,6 @@ export default function BeamStatusDisplay() {
     onOpen: () => {
       // if this is called on a reconnect, clear any old values and re-subscribe to everything
       setWebSockErr("");
-      messageQueue.current = [];
       lastInstList.current = null;
       setPvs(new Map());
       setInstList([]);
@@ -74,36 +72,11 @@ export default function BeamStatusDisplay() {
         }
         return;
       }
-      messageQueue.current.push(updatedPV);
-    },
-    onError: () => {
-      setWebSockErr(
-        "Failed to connect to websocket - please check your network connection and contact Experiment Controls if this persists.",
-      );
-    },
-    share: true,
-    retryOnError: true,
-    reconnectInterval: webSocketReconnectInterval,
-    reconnectAttempts: webSocketReconnectAttempts,
-  });
-
-  useEffect(() => {
-    // Batch PV updates and only re-render once per interval, to avoid performance issues
-    // from re-rendering on every single websocket message.
-    const interval = setInterval(() => {
-      if (messageQueue.current.length == 0) {
-        return;
-      }
-      const updates = messageQueue.current;
-      messageQueue.current = [];
-
-      setPvs((oldPvs) => {
-        const newPvs = new Map(oldPvs);
-        for (const updatedPV of updates) {
+      startTransition(() =>
+        setPvs((oldPvs) => {
           const pvName = updatedPV.pv;
-          // Copy the existing entry so that we don't mutate the previous state
           const pv: IfcPV = {
-            ...(newPvs.get(pvName) ?? { pvaddress: pvName }),
+            ...(oldPvs.get(pvName) ?? { pvaddress: pvName }),
           };
 
           storePrecision(updatedPV, pv);
@@ -116,13 +89,20 @@ export default function BeamStatusDisplay() {
           if (pvVal != undefined) {
             pv.value = toPrecision(pv, pvVal);
           }
-          newPvs.set(pvName, pv);
-        }
-        return newPvs;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+          return new Map(oldPvs).set(pvName, pv);
+        }),
+      );
+    },
+    onError: () => {
+      setWebSockErr(
+        "Failed to connect to websocket - please check your network connection and contact Experiment Controls if this persists.",
+      );
+    },
+    share: true,
+    retryOnError: true,
+    reconnectInterval: webSocketReconnectInterval,
+    reconnectAttempts: webSocketReconnectAttempts,
+  });
 
   return (
     <div className="w-full flex flex-col gap-4">

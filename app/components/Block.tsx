@@ -1,5 +1,7 @@
 "use client";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
+import { pvAtom } from "@/app/components/pvAtoms";
 import type { IfcBlock } from "@/app/types";
 
 const grafana_stub =
@@ -12,14 +14,17 @@ const date_format = new Intl.DateTimeFormat("en-GB", {
 });
 
 export default function Block({
-  pv,
+  address,
+  pv: staticPv,
   instName,
   showHiddenBlocks,
 }: {
+  address: string;
   pv: IfcBlock;
   instName: string;
   showHiddenBlocks: boolean;
 }) {
+  const pv = { ...staticPv, ...useAtomValue(pvAtom(address)) };
   const [currentValue, setCurrentValue] = useState<
     string | number | undefined
   >();

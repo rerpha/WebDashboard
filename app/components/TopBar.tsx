@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { DASHBOARD } from "@/app/components/Instrument";
+import { useLivePVs } from "@/app/components/pvAtoms";
 import type { tBlockMapping } from "@/app/types";
 import {
   getForegroundColour,
@@ -161,5 +162,11 @@ const TopBar = function TopBar({
   );
 };
 
-export default memo(TopBar);
+export default memo(function LiveTopBar(props: Parameters<typeof TopBar>[0]) {
+  return TopBar({
+    ...props,
+    dashboard: useLivePVs(props.dashboard),
+    runInfoPVs: useLivePVs(props.runInfoPVs),
+  });
+});
 export const exportedForTesting = TopBar;

@@ -37,10 +37,11 @@ const Group = memo(function Group({
           </tr>
         </thead>
         <tbody className="text-gray-200 sticky">
-          {Array.from(blocks.values()).map((pv) => {
+          {Array.from(blocks).map(([address, pv]) => {
             return (
               <Block
                 key={pv.human_readable_name}
+                address={address}
                 pv={pv}
                 instName={instName}
                 showHiddenBlocks={showHiddenBlocks}
